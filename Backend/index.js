@@ -15,6 +15,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 import authRoute from "./routes/authentication.js"
+import notesRoute from "./routes/notes.js"
+
+app.use("/api/notes", notesRoute)
 
 app.use("/api/auth", authRoute)
 

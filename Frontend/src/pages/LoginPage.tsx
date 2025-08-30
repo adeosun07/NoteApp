@@ -40,7 +40,7 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
       // redirect after login
-      window.location.href = "/";
+      window.location.href = "/dashboard";
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || "Invalid OTP");
@@ -103,7 +103,7 @@ export default function LoginPage() {
           </form>
 
           <p className="redirect">
-            Don’t have an account? <a href="/signup">Sign Up</a>
+            Don't have an account? <a href="/signup">Sign Up</a>
           </p>
 
           {error && <p style={{ color: "red" }}>{error}</p>}
