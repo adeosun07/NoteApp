@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-const API = "http://localhost:4000/api"; // change to your backend API
+import API from "../Api";
+import LogoutButton from "../components/LogoutButton";
 
 interface Note {
   id: number;
@@ -19,21 +18,16 @@ export default function NotesPage() {
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const token = localStorage.getItem("jwt");
+  const user = JSON.parse(
+    localStorage.getItem("user") || sessionStorage.getItem("user") || "{}"
+  );
 
-  // Fetch notes
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${API}/notes`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await API.get("/notes");
         setNotes(res.data.notes);
-        console.log("Fetched notes:", res.data);
       } catch (err: any) {
         console.error(err);
         setError("Failed to load notes");
@@ -42,31 +36,19 @@ export default function NotesPage() {
       }
     };
 
-    if (user?.id && token) {
+    if (user?.id) {
       fetchNotes();
     }
-  }, [user?.id, token]);
+  }, [user?.id]);
 
-  // Create note
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title || !note) return alert("Please fill all fields");
 
     try {
       setSaving(true);
-      const res = await axios.post(
-        `${API}/notes/create-note`,
-        {
-          title,
-          note,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setNotes((prev) => [res.data, ...prev]); // add new note on top
+      const res = await API.post("/notes/create-note", { title, note });
+      setNotes((prev) => [res.data, ...prev]);
       setTitle("");
       setNote("");
     } catch (err: any) {
@@ -77,15 +59,10 @@ export default function NotesPage() {
     }
   };
 
-  // Delete note
   const handleDelete = async (noteId: number) => {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
     try {
-      await axios.delete(`${API}/notes/${noteId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await API.delete(`/notes/${noteId}`);
       setNotes((prev) => prev.filter((n) => n.id !== noteId));
     } catch (err: any) {
       console.error(err);
@@ -99,8 +76,8 @@ export default function NotesPage() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Your Notes</h1>
+      <LogoutButton />
 
-      {/* Create Note Form */}
       <form onSubmit={handleCreate} style={{ marginBottom: "20px" }}>
         <input
           type="text"
@@ -121,7 +98,6 @@ export default function NotesPage() {
         </button>
       </form>
 
-      {/* Notes List */}
       {notes.length === 0 ? (
         <p>No notes found</p>
       ) : (

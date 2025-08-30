@@ -1,17 +1,27 @@
-import { Routes, Route } from 'react-router-dom';
-import SignupPage from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
-import Dashboard from './pages/Dashboard'
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import SignupPage from "./pages/SignupPage/SignupPage";
+import LoginPage from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
+import ProtectedRoute from "./ProtectedRoute";
+import "./App.css";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/" element={<SignupPage />} />
-      <Route path="/signup" element={<SignupPage />} />
-      <Route path="/dashboard" element={< Dashboard />} />
-    </Routes>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={<SignupPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 

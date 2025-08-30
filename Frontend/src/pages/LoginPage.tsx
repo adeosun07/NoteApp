@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import reactLogo from "../assets/react.svg";
+import OtpInput from "../components/OtpForm";
 
 export default function LoginPage() {
   const [step, setStep] = useState<"email" | "otp">("email");
@@ -8,10 +9,10 @@ export default function LoginPage() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
   const API = "http://localhost:4000/api/auth";
 
-  // Step 1: Request OTP
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -27,7 +28,6 @@ export default function LoginPage() {
     }
   };
 
-  // Step 2: Verify OTP
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -35,11 +35,14 @@ export default function LoginPage() {
     try {
       const res = await axios.post(`${API}/verify-otp`, { email, otp });
 
-      // store JWT + user info
-      localStorage.setItem("jwt", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      if (keepLoggedIn) {
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("jwt", res.data.token);
+      } else {
+        sessionStorage.setItem("jwt", res.data.token);
+        sessionStorage.setItem("user", JSON.stringify(res.data.user));
+      }
 
-      // redirect after login
       window.location.href = "/dashboard";
     } catch (err: any) {
       console.error(err);
@@ -47,6 +50,9 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
+  };
+  const handleSession = () => {
+    setKeepLoggedIn(!keepLoggedIn);
   };
 
   return (
@@ -82,16 +88,17 @@ export default function LoginPage() {
             </fieldset>
 
             {step === "otp" && (
-              <fieldset>
-                <legend>OTP</legend>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
-                />
-              </fieldset>
+              <OtpInput otp={otp} setOtp={setOtp} />
             )}
+            <p>
+              <input
+                type="checkbox"
+                checked={keepLoggedIn}
+                onChange={handleSession}
+                id="keepLoggedIn"
+              />
+              <label htmlFor="keepLoggedIn"> Keep me logged in</label>
+            </p>
 
             <button type="submit" disabled={loading}>
               {loading

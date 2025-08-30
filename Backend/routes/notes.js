@@ -4,7 +4,6 @@ import authMiddleware from "../middleware/auth.js"; // <-- make sure you have th
 
 const router = express.Router();
 
-// Protect all routes with auth
 router.get("/", authMiddleware, noteControllers.getNotes);
 router.post("/create-note", authMiddleware, noteControllers.createNote);
 router.delete("/:noteId", authMiddleware, noteControllers.deleteNote);

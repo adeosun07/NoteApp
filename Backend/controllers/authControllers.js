@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import pool from "../db.js";
 import nodemailer from "nodemailer";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 const saltRounds = 10;
 const secretKey = process.env.JWT_SECRET || "your_secret_key";
@@ -103,16 +105,50 @@ export default {
           [email]
         );
         const validUser = validateUser.rows[0];
-        const token = jwt.sign(
+        const accessToken = jwt.sign(
           { id: validUser.id, email: validUser.email },
           secretKey,
           { expiresIn: "1h" }
         );
-        return res.json({ token: token, user: validUser });
+        const refreshToken = jwt.sign(
+          { id: user.id },
+          process.env.REFRESH_SECRET,
+          { expiresIn: "7d" }
+        );
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        });
+        return res.json({ token: accessToken, user: validUser });
       }
     } catch (error) {
       console.error("Error verifying OTP:", error);
-      res.status(500).json({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  logout: (req, res) => {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    return res.status(200).json({ message: "Logged out successfully" });
+  },
+  refreshToken: (req, res) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      return res.status(401).json({ message: "No refresh token provided" });
+    }
+    try {
+      const decoded = jwt.verify(refreshToken, process.env.REFRESH_SECRET);
+      const accessToken = jwt.sign({ id: decoded.id }, secretKey, {
+        expiresIn: "1h",
+      });
+      return res.json({ token: accessToken });
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      return res.status(401).json({ message: "Invalid refresh token" });
     }
   },
 };

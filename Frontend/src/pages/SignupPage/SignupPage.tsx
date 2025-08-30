@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
-import reactLogo from "../assets/react.svg";
+import reactLogo from "../../assets/react.svg";
+import OtpInput from "../../components/OtpForm";
 
 export default function SignupPage() {
   const [step, setStep] = useState<"email" | "otp">("email");
@@ -9,7 +10,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const API = "http://localhost:4000/api/auth";
 
@@ -21,7 +22,7 @@ export default function SignupPage() {
       await axios.post(`${API}/send-otp`, { email, name, dob });
       setStep("otp");
     } catch (err: any) {
-        console.log(err);
+      console.log(err);
       setError(err.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
@@ -38,12 +39,10 @@ export default function SignupPage() {
         otp,
       });
 
-      // store JWT in localStorage
       localStorage.setItem("jwt", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      // redirect or show success
-      window.location.href = "/login";
+      window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid OTP");
     } finally {
@@ -103,17 +102,7 @@ export default function SignupPage() {
               />
             </fieldset>
 
-            {step === "otp" && (
-              <fieldset>
-                <legend>OTP</legend>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  required
-                />
-              </fieldset>
-            )}
+            {step === "otp" && <OtpInput otp={otp} setOtp={setOtp} />}
 
             <button type="submit" disabled={loading}>
               {loading

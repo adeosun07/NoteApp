@@ -1,11 +1,10 @@
 import pool from "../db.js";
 
 export default {
-  // Create a new note
   createNote: async (req, res) => {
     const { note, title } = req.body;
     try {
-      const { id } = req.user; // comes from JWT middleware
+      const { id } = req.user;
       const newNote = await pool.query(
         "INSERT INTO notes (user_id, note, title) VALUES ($1, $2, $3) RETURNING *",
         [id, note, title]
@@ -17,7 +16,7 @@ export default {
     }
   },
 
-  // Get all notes of the logged-in user
+
   getNotes: async (req, res) => {
     try {
       const { id, email } = req.user;
@@ -29,13 +28,10 @@ export default {
     }
   },
 
-  // Delete a note (only by its owner)
   deleteNote: async (req, res) => {
     const { noteId } = req.params;
     try {
       const { id } = req.user;
-
-      // check ownership before deleting
       const note = await pool.query("SELECT * FROM notes WHERE id = $1 AND user_id = $2", [
         noteId,
         id,
