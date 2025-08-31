@@ -11,4 +11,5 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+declare module 'react/jsx-runtime'; // fine for React 18
 
