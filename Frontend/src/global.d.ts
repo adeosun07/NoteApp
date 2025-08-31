@@ -6,5 +6,3 @@ declare module '*.svg' {
 }
 /// <reference types="react" />
 /// <reference types="react-dom" />
-declare module 'react/jsx-runtime';
-declare module 'react-dom/client';
