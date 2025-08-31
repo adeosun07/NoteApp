@@ -15,7 +15,7 @@ export default function SignupPage() {
 
   const API = import.meta.env.VITE_API_URL;
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -23,26 +23,20 @@ export default function SignupPage() {
       await axios.post(`${API}/auth/send-otp`, { email, name, dob });
       setStep("otp");
     } catch (err: any) {
-      console.log(err);
       setError(err.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${API}/auth/verify-otp`, {
-        email,
-        otp,
-      });
-
+      const res = await axios.post(`${API}/auth/verify-otp`, { email, otp });
       localStorage.setItem("jwt", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.response?.data?.message || "Invalid OTP");
@@ -50,7 +44,6 @@ export default function SignupPage() {
       setLoading(false);
     }
   };
-
   return (
     <>
       <header className={styles["header"]}>
@@ -71,15 +64,13 @@ export default function SignupPage() {
         </div>
 
         <div>
-          <form
-            onSubmit={step === "email" ? handleSendOtp : handleVerifyOtp}
-          >
+          <form onSubmit={step === "email" ? handleSendOtp : handleVerifyOtp}>
             <fieldset className={styles["fieldset"]}>
               <legend>Your Name</legend>
               <input
                 type="text"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
                 required
               />
             </fieldset>
@@ -89,7 +80,7 @@ export default function SignupPage() {
               <input
                 type="date"
                 value={dob}
-                onChange={(e) => setDob(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDob(e.target.value)}
                 required
               />
             </fieldset>
@@ -99,7 +90,7 @@ export default function SignupPage() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
                 required
               />
             </fieldset>

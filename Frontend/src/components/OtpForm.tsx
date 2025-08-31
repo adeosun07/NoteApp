@@ -21,7 +21,9 @@ export default function OtpInput({ otp, setOtp }: OtpInputProps) {
           type={showOtp ? "text" : "password"}
           value={otp}
           placeholder="OTP"
-          onChange={(e) => setOtp(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setOtp(e.target.value)
+          }
           required
         />
         <span>

@@ -29,7 +29,7 @@ export default function LoginPage() {
     return () => clearInterval(interval);
   }, [timer, step]);
 
-  const handleSendOtp = async (e?: React.FormEvent) => {
+  const handleSendOtp = async (e?: React.FormEvent<HTMLFormElement>) => {
     e?.preventDefault();
     setLoading(true);
     setError("");
@@ -39,31 +39,27 @@ export default function LoginPage() {
       setTimer(300);
       setCanResend(false);
     } catch (err: any) {
-      console.error(err);
       setError(err.response?.data?.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyOtp = async (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
       const res = await axios.post(`${API}/auth/verify-otp`, { email, otp });
-
       if (keepLoggedIn) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
         localStorage.setItem("jwt", res.data.token);
       } else {
-        sessionStorage.setItem("jwt", res.data.token);
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
+        sessionStorage.setItem("jwt", res.data.token);
       }
-
       window.location.href = "/dashboard";
     } catch (err: any) {
-      console.error(err);
       setError(err.response?.data?.message || "Invalid OTP");
     } finally {
       setLoading(false);
@@ -78,7 +74,7 @@ export default function LoginPage() {
     <>
       <header className={styles["header"]}>
         <div>
-          <img src={reactLogo}  alt="React logo" />
+          <img src={reactLogo} alt="React logo" />
         </div>
         <div>
           <p>HD</p>
@@ -100,7 +96,9 @@ export default function LoginPage() {
               <input
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setEmail(e.target.value)
+                }
                 required
               />
             </fieldset>
