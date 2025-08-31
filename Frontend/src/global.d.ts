@@ -23,12 +23,10 @@ declare module 'react-dom/client' {
 
 // Basic React types for Render compatibility
 import * as React from 'react';
-export type { ReactNode, FC, ChangeEvent } from 'react';
-
-interface ImportMetaEnv {
-  readonly VITE_API_URL: string;
-}
+export type { FC, ReactNode, ChangeEvent } from 'react';
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv;
+  readonly env: {
+    [key: string]: string | undefined;
+  };
 }
