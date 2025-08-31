@@ -13,4 +13,7 @@ interface ImportMeta {
 }
 declare module 'react/jsx-runtime'; // fine for React 18
 declare module 'react'; // fine for React 18
+declare module 'react-dom'; // fine for React 18
+declare module 'react-router-dom'; // fine for React Router DOM 6
+declare module 'react-dom/client'; // fine for React DOM Client 18
 
