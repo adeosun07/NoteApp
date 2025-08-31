@@ -3,7 +3,6 @@ import SignupPage from "./pages/SignupPage/SignupPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
-import "./App.css";
 
 function App() {
   return (
