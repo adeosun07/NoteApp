@@ -1,3 +1,4 @@
+import React from "react";
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import styles from "../pages/SignupPage/SignupPage.module.css";
