@@ -19,9 +19,9 @@ export default {
 
   getNotes: async (req, res) => {
     try {
-      const { id, email } = req.user;
+      const { id, email, username } = req.user;
       const notes = await pool.query("SELECT * FROM notes WHERE user_id = $1", [id]);
-      res.status(200).json({ notes: notes.rows, email });
+      res.status(200).json({ notes: notes.rows, email, username });
     } catch (error) {
       console.error("Error fetching notes:", error);
       res.status(500).json({ message: "Internal server error" });

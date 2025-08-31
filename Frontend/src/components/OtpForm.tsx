@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import styles from "../pages/SignupPage/SignupPage.module.css";
 
 interface OtpInputProps {
   otp: string;
@@ -14,21 +15,23 @@ export default function OtpInput({ otp, setOtp }: OtpInputProps) {
   };
 
   return (
-    <fieldset className="otp">
-      <legend>OTP</legend>
-      <input
-        type={showOtp ? "text" : "password"}
-        value={otp}
-        onChange={(e) => setOtp(e.target.value)}
-        required
-      />
-      <span>
-        {showOtp ? (
-          <FaEyeSlash className="eye-icon" onClick={toggleOtpVisibility} />
-        ) : (
-          <FaEye className="eye-icon" onClick={toggleOtpVisibility} />
-        )}
-      </span>
-    </fieldset>
+    <>
+      <fieldset className={styles["fieldset"]}>
+        <input
+          type={showOtp ? "text" : "password"}
+          value={otp}
+          placeholder="OTP"
+          onChange={(e) => setOtp(e.target.value)}
+          required
+        />
+        <span>
+          {showOtp ? (
+            <FaEyeSlash className="eye-icon" onClick={toggleOtpVisibility} />
+          ) : (
+            <FaEye className="eye-icon" onClick={toggleOtpVisibility} />
+          )}
+        </span>
+      </fieldset>
+    </>
   );
 }

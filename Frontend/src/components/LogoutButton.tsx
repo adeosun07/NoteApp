@@ -1,4 +1,5 @@
 import axios from 'axios';
+import styles from "../pages/SignupPage/SignupPage.module.css"
 
   const API = "http://localhost:4000/api/auth";
   
@@ -18,11 +19,12 @@ const LogoutButton = () => {
   };
 
   return (
-    <button
+    <p
+    className={styles["span"]}
       onClick={handleLogout}
     >
-      Logout
-    </button>
+      Sign out
+    </p>
   );
 };
 

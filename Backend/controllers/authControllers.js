@@ -8,8 +8,7 @@ dotenv.config();
 const saltRounds = 10;
 const secretKey = process.env.JWT_SECRET || "your_secret_key";
 const transporter = nodemailer.createTransport({
-  host: "smtp.ethereal.email",
-  port: 587,
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -72,7 +71,7 @@ export default {
         res.status(200).json({ message: "OTP sent to email" });
       } catch (error) {
         console.error("Error sending OTP email:", error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(500).json({ message: "No user found" });
       }
     }
   },
@@ -101,12 +100,12 @@ export default {
           email,
         ]);
         const validateUser = await pool.query(
-          "SELECT id, email FROM users WHERE email = $1",
+          "SELECT id, email, name FROM users WHERE email = $1",
           [email]
         );
         const validUser = validateUser.rows[0];
         const accessToken = jwt.sign(
-          { id: validUser.id, email: validUser.email },
+          { id: validUser.id, email: validUser.email, username: validUser.name},
           secretKey,
           { expiresIn: "1h" }
         );

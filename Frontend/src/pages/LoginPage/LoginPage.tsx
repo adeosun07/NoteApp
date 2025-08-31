@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import reactLogo from "../assets/react.svg";
-import OtpInput from "../components/OtpForm";
+import reactLogo from "../../assets/react.svg";
+import OtpInput from "../../components/OtpForm";
+import styles from "../SignupPage/SignupPage.module.css";
 
 export default function LoginPage() {
   const [step, setStep] = useState<"email" | "otp">("email");
@@ -11,15 +12,32 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
-  const API = "http://localhost:4000/api/auth";
+  const [timer, setTimer] = useState(0);
+  const [canResend, setCanResend] = useState(false);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const API = import.meta.env.VITE_API_URL;
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0 && step === "otp") {
+      setCanResend(true);
+    }
+    return () => clearInterval(interval);
+  }, [timer, step]);
+
+  const handleSendOtp = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setLoading(true);
     setError("");
     try {
-      await axios.post(`${API}/send-otp`, { email });
+      await axios.post(`${API}/auth/send-otp`, { email });
       setStep("otp");
+      setTimer(300);
+      setCanResend(false);
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.message || "Failed to send OTP");
@@ -33,7 +51,7 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${API}/verify-otp`, { email, otp });
+      const res = await axios.post(`${API}/auth/verify-otp`, { email, otp });
 
       if (keepLoggedIn) {
         localStorage.setItem("user", JSON.stringify(res.data.user));
@@ -51,33 +69,33 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
   const handleSession = () => {
     setKeepLoggedIn(!keepLoggedIn);
   };
 
   return (
     <>
-      <header>
-        <div className="logo">
-          <img src={reactLogo} className="logo react" alt="React logo" />
+      <header className={styles["header"]}>
+        <div>
+          <img src={reactLogo}  alt="React logo" />
         </div>
-        <div className="company_name">
+        <div>
           <p>HD</p>
         </div>
       </header>
 
-      <main>
+      <main className={styles["main"]}>
         <div>
           <h1>Login</h1>
-          <p>Welcome back! Enter your email to receive a login code.</p>
+          <p className={styles["small_text"]}>
+            Please login to continue to your account
+          </p>
         </div>
 
-        <div className="form">
-          <form
-            className="form_body"
-            onSubmit={step === "email" ? handleSendOtp : handleVerifyOtp}
-          >
-            <fieldset>
+        <div>
+          <form onSubmit={step === "email" ? handleSendOtp : handleVerifyOtp}>
+            <fieldset className={styles["fieldset"]}>
               <legend>Email</legend>
               <input
                 type="email"
@@ -87,10 +105,25 @@ export default function LoginPage() {
               />
             </fieldset>
 
+            {step === "otp" && <OtpInput otp={otp} setOtp={setOtp} />}
             {step === "otp" && (
-              <OtpInput otp={otp} setOtp={setOtp} />
+              <p
+                className={styles["resendCode"]}
+                onClick={() => handleSendOtp()}
+                style={{
+                  cursor: canResend ? "pointer" : "not-allowed",
+                  color: canResend ? "#367AFF" : "gray",
+                }}
+              >
+                {canResend
+                  ? "Resend Code"
+                  : `Resend in ${Math.floor(timer / 60)}:${String(
+                      timer % 60
+                    ).padStart(2, "0")}`}
+              </p>
             )}
-            <p>
+
+            <p className={styles["keepMeLoggedIn"]}>
               <input
                 type="checkbox"
                 checked={keepLoggedIn}
@@ -108,9 +141,13 @@ export default function LoginPage() {
                 : "Login"}
             </button>
           </form>
-
-          <p className="redirect">
-            Don't have an account? <a href="/signup">Sign Up</a>
+          <p className={styles["redirect"]}>
+            <span className={styles["small_text"]}>
+              Don't have an account?{" "}
+            </span>
+            <a href="/signup" className={styles["span"]}>
+              Create one
+            </a>
           </p>
 
           {error && <p style={{ color: "red" }}>{error}</p>}

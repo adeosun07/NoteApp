@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import reactLogo from "../../assets/react.svg";
 import OtpInput from "../../components/OtpForm";
+import styles from "./SignupPage.module.css";
 
 export default function SignupPage() {
   const [step, setStep] = useState<"email" | "otp">("email");
@@ -12,14 +13,14 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  const API = "http://localhost:4000/api/auth";
+  const API = import.meta.env.VITE_API_URL;
 
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      await axios.post(`${API}/send-otp`, { email, name, dob });
+      await axios.post(`${API}/auth/send-otp`, { email, name, dob });
       setStep("otp");
     } catch (err: any) {
       console.log(err);
@@ -34,7 +35,7 @@ export default function SignupPage() {
     setLoading(true);
     setError("");
     try {
-      const res = await axios.post(`${API}/verify-otp`, {
+      const res = await axios.post(`${API}/auth/verify-otp`, {
         email,
         otp,
       });
@@ -52,27 +53,28 @@ export default function SignupPage() {
 
   return (
     <>
-      <header>
-        <div className="logo">
+      <header className={styles["header"]}>
+        <div>
           <img src={reactLogo} className="logo react" alt="React logo" />
         </div>
-        <div className="company_name">
+        <div>
           <p>HD</p>
         </div>
       </header>
 
-      <main>
+      <main className={styles["main"]}>
         <div>
           <h1>Sign Up</h1>
-          <p>Sign up to enjoy the feature of HD</p>
+          <p className={styles["small_text"]}>
+            Sign up to enjoy the feature of HD
+          </p>
         </div>
 
-        <div className="form">
+        <div>
           <form
-            className="form_body"
             onSubmit={step === "email" ? handleSendOtp : handleVerifyOtp}
           >
-            <fieldset>
+            <fieldset className={styles["fieldset"]}>
               <legend>Your Name</legend>
               <input
                 type="text"
@@ -82,7 +84,7 @@ export default function SignupPage() {
               />
             </fieldset>
 
-            <fieldset>
+            <fieldset className={styles["fieldset"]}>
               <legend>Date of Birth</legend>
               <input
                 type="date"
@@ -92,7 +94,7 @@ export default function SignupPage() {
               />
             </fieldset>
 
-            <fieldset>
+            <fieldset className={styles["fieldset"]}>
               <legend>Email</legend>
               <input
                 type="email"
@@ -112,8 +114,13 @@ export default function SignupPage() {
                 : "Sign Up"}
             </button>
           </form>
-          <p className="redirect">
-            Aleady have an account?? <a href="/login">Login</a>
+          <p className={styles["redirect"]}>
+            <span className={styles["small_text"]}>
+              Aleady have an account??
+            </span>
+            <a href="/login" className={styles["span"]}>
+              Sign in
+            </a>
           </p>
 
           {error && <p style={{ color: "red" }}>{error}</p>}
