@@ -1,7 +1,7 @@
 import axios from 'axios';
 import styles from "../pages/SignupPage/SignupPage.module.css"
 
-  const API = "http://localhost:4000/api/auth";
+  const API = "https://note-app-psi-rosy.vercel.app/api/auth";
   
 const LogoutButton = () => {
   const handleLogout = async () => {

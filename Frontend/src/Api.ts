@@ -23,7 +23,7 @@ API.interceptors.response.use(
 
       try {
         const res = await axios.post(
-          "http://localhost:4000/api/auth/refresh",
+          "https://note-app-psi-rosy.vercel.app/api/auth/refresh",
           {},
           { withCredentials: true }
         );
