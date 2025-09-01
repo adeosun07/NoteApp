@@ -16,9 +16,9 @@ export default function LoginPage() {
   const [canResend, setCanResend] = useState(false);
 
   const API = import.meta.env.VITE_API_URL;
-  console.log("API URL:", API);
 
   useEffect(() => {
+    console.log("API URL:", API);
     let interval: NodeJS.Timeout;
     if (timer > 0) {
       interval = setInterval(() => {
