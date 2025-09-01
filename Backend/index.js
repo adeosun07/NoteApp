@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 const corsOptions = {
-  origin: 'https://note-app-psi-rosy.vercel.app' || '*',
+  origin: ['https://note-app-psi-rosy.vercel.app', 'http://localhost:4173'],
   credentials: true,
   optionsSuccessStatus: 200,
 };
