@@ -1,15 +1,11 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "A note app",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cd ../Frontend && npm install && npm run build && cd ../Backend && node index.js"
+    "start": "node index.js",
+    "build": "cd ../Frontend && npm install && npm run build && cp -r dist ./public"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
