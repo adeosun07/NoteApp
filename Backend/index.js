@@ -18,19 +18,18 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve frontend build
 app.use(express.static(path.join(__dirname, "public")));
 
-// API routes
+
 import authRoute from "./routes/authentication.js";
 import notesRoute from "./routes/notes.js";
 
 app.use("/api/auth", authRoute);
 app.use("/api/notes", notesRoute);
 
-// All other requests serve index.html
-app.get("/:all(.*)", (req, res) => {
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) return next();
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
