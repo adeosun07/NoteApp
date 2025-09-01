@@ -27,7 +27,7 @@ import notesRoute from "./routes/notes.js"
 app.use("/api/notes", notesRoute)
 app.use("/api/auth", authRoute)
 
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
 });
 
