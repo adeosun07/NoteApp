@@ -30,7 +30,7 @@ app.use("/api/auth", authRoute);
 app.use("/api/notes", notesRoute);
 
 // All other requests serve index.html
-app.get("/*", (req, res) => {
+app.get("/:all(.*)", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
