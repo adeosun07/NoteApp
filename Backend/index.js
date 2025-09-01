@@ -18,7 +18,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../frontend/dist")));
+app.use(express.static(path.join(__dirname, "../Frontend/dist")));
 const PORT = process.env.PORT || 4000;
 
 import authRoute from "./routes/authentication.js"
@@ -28,7 +28,7 @@ app.use("/api/notes", notesRoute)
 app.use("/api/auth", authRoute)
 
 app.get("/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+  res.sendFile(path.join(__dirname, "../Frontend/dist/index.html"));
 });
 
 app.listen(PORT, () => {
